@@ -10,6 +10,7 @@ import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchemas";
 import z from "zod";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -55,23 +56,11 @@ const NewIssuePage = () => {
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
-            if (error instanceof Error) {
-              setError(error.message);
-            } else {
-              // Handle the case where the error is not an Error object
-              setError("An unknown error occurred");
-            }
+            setError("An unknown error occurred");
           }
         })}>
         <TextField.Root {...register("title")} placeholder="Title" />
-        {errors.title && (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <InfoCircledIcon />
-            </Callout.Icon>
-            <Callout.Text>{errors.title.message}</Callout.Text>
-          </Callout.Root>
-        )}
+        <ErrorMessage>{errors.title?.message} </ErrorMessage>
         <Controller
           name="description"
           control={control}
@@ -79,14 +68,7 @@ const NewIssuePage = () => {
             <SimpleMDE placeholder="Description" {...field} id="issue" value={autosavedValue} options={anOptions} />
           )}
         />
-        {errors.description && (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <InfoCircledIcon />
-            </Callout.Icon>
-            <Callout.Text>{errors.description.message}</Callout.Text>
-          </Callout.Root>
-        )}
+        <ErrorMessage>{errors.description?.message} </ErrorMessage>
         <Button className="bg-blue-500 text-white p-2 rounded">Submit new issue</Button>
       </form>
     </div>
