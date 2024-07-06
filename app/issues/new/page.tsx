@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation";
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchemas";
-import z from "zod";
+import z, { set } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -25,6 +26,7 @@ const NewIssuePage = () => {
   } = useForm<IssueForm>({
     resolver: zodResolver(createIssueSchema),
   });
+  const [isSubmit, setIsSubmit] = useState(false);
   // set up the autosave feature for the SimpleMDE editor
   const router = useRouter();
   const delay = 1000;
@@ -53,14 +55,16 @@ const NewIssuePage = () => {
         className="max-w-xl space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setIsSubmit(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
+            setIsSubmit(false);
             setError("An unknown error occurred");
           }
         })}>
         <TextField.Root {...register("title")} placeholder="Title" />
-        <ErrorMessage>{errors.title?.message} </ErrorMessage>
+        {errors.title && <ErrorMessage>{errors.title?.message} </ErrorMessage>}
         <Controller
           name="description"
           control={control}
@@ -68,8 +72,8 @@ const NewIssuePage = () => {
             <SimpleMDE placeholder="Description" {...field} id="issue" value={autosavedValue} options={anOptions} />
           )}
         />
-        <ErrorMessage>{errors.description?.message} </ErrorMessage>
-        <Button className="bg-blue-500 text-white p-2 rounded">Submit new issue</Button>
+        {errors.description && <ErrorMessage>{errors.description?.message} </ErrorMessage>}
+        <Button disabled={isSubmit}>Submit new issue {isSubmit && <Spinner />}</Button>
       </form>
     </div>
   );
