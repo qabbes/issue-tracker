@@ -41,6 +41,17 @@ const NewIssuePage = () => {
     };
   }, [delay]);
 
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsSubmit(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setIsSubmit(false);
+      setError("An unknown error occurred");
+    }
+  });
+
   return (
     <div className=" max-w-xl">
       {error && (
@@ -51,18 +62,7 @@ const NewIssuePage = () => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form
-        className="max-w-xl space-y-3"
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            setIsSubmit(true);
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error) {
-            setIsSubmit(false);
-            setError("An unknown error occurred");
-          }
-        })}>
+      <form className="max-w-xl space-y-3" onSubmit={onSubmit}>
         <TextField.Root {...register("title")} placeholder="Title" />
         {errors.title && <ErrorMessage>{errors.title?.message} </ErrorMessage>}
         <Controller
