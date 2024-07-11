@@ -2,9 +2,9 @@ import { Status } from "@prisma/client";
 import { Badge } from "@radix-ui/themes";
 import React from "react";
 
-const statusColors: Record<Status, { label: string; color: "orange" | "blue" | "green" }> = {
+const statusColors: Record<Status, { label: string; color: "orange" | "violet" | "green" }> = {
   OPEN: { label: "Open", color: "orange" },
-  IN_PROGRESS: { label: "In Progress", color: "blue" },
+  IN_PROGRESS: { label: "In Progress", color: "violet" },
   DONE: { label: "Done", color: "green" },
 };
 
