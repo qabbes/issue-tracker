@@ -50,6 +50,11 @@ const IssueForm = ({ issue }: Props) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsSubmit(true);
+      if (issue) {
+        await axios.patch(`/api/issues/${issue.id}`, data);
+        router.push(`/issues/${issue.id}`);
+        return;
+      }
       await axios.post("/api/issues", data);
       router.push("/issues");
     } catch (error) {
@@ -78,7 +83,9 @@ const IssueForm = ({ issue }: Props) => {
           render={({ field }) => <SimpleMDE placeholder="Description" {...field} id="issue" />}
         />
         {errors.description && <ErrorMessage>{errors.description?.message} </ErrorMessage>}
-        <Button disabled={isSubmit}>Submit new issue {isSubmit && <Spinner />}</Button>
+        <Button disabled={isSubmit}>
+          {issue ? "Update Issue" : "Submit new issue"} {isSubmit && <Spinner />}
+        </Button>
       </form>
     </div>
   );
