@@ -1,7 +1,6 @@
-import React from "react";
-import { Table } from "@radix-ui/themes";
-import prisma from "@/prisma/client";
 import { IssueStatusBadge, Link } from "@/app/components";
+import prisma from "@/prisma/client";
+import { Table } from "@radix-ui/themes";
 import IssuesToolbar from "./IssuesToolbar";
 
 const IssuesPage = async () => {
@@ -24,13 +23,13 @@ const IssuesPage = async () => {
               <Table.RowHeaderCell>
                 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                 <div className="block sm:hidden">
-                  <IssueStatusBadge status={issue.status}></IssueStatusBadge>
+                  <IssueStatusBadge status={issue.status} />
                 </div>
               </Table.RowHeaderCell>
               <Table.Cell className="hidden sm:table-cell">
-                <IssueStatusBadge status={issue.status}></IssueStatusBadge>
+                <IssueStatusBadge status={issue.status} />
               </Table.Cell>
-              <Table.Cell className="hidden sm:table-cell">{issue.createdAt.toDateString()}</Table.Cell>
+              <Table.Cell className="hidden sm:table-cell">{issue.createdAt.toLocaleDateString()}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
@@ -39,4 +38,5 @@ const IssuesPage = async () => {
   );
 };
 
+export const dynamic = "force-dynamic";
 export default IssuesPage;
