@@ -4,8 +4,10 @@ import axios from "axios";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
+  const [error, setError] = useState(false);
   const router = useRouter();
   const handleDelete = async () => {
     try {
@@ -13,6 +15,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
       router.push("/issues");
       router.refresh();
     } catch (error) {
+      setError(true);
       console.error(error);
     }
   };
@@ -42,6 +45,17 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
           </AlertDialog.Action>
         </Flex>
       </AlertDialog.Content>
+      <AlertDialog.Root open={error}>
+        <AlertDialog.Content>
+          <AlertDialog.Title className="text-center">Error</AlertDialog.Title>
+          <AlertDialog.Description> There was an error deleting the issue.</AlertDialog.Description>
+          <Flex justify="center">
+            <Button variant="solid" color="crimson" onClick={() => setError(false)} mt="2">
+              Close
+            </Button>
+          </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
     </AlertDialog.Root>
   );
 };
