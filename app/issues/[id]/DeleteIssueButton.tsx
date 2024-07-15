@@ -5,16 +5,21 @@ import { FaRegTrashCan } from "react-icons/fa6";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Spinner } from "@/app/components";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [error, setError] = useState(false);
   const router = useRouter();
+  const [isSubmit, setIsSubmit] = useState(false);
+
   const handleDelete = async () => {
     try {
+      setIsSubmit(true);
       await axios.delete("/api/issues/" + issueId);
       router.push("/issues");
       router.refresh();
     } catch (error) {
+      setIsSubmit(false);
       setError(true);
       console.error(error);
     }
@@ -24,7 +29,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
       <AlertDialog.Trigger>
         <Button color="crimson">
           <FaRegTrashCan />
-          Delete Issue
+          {isSubmit ? "Deleting Issue..." : "Delete Issue"} {isSubmit && <Spinner />}
         </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content maxWidth="450px">
