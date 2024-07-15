@@ -1,5 +1,6 @@
 "use client";
 import { ErrorMessage, Spinner } from "@/app/components";
+import IssueStatusChooser from "@/app/components/IssueStatusChooser";
 import { createIssueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
@@ -8,12 +9,10 @@ import { Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-
 import z from "zod";
-
 // lazy load the SimpleMDE editor
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 
@@ -35,6 +34,9 @@ const IssueForm = ({ issue }: Props) => {
   });
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const lastPath = pathname.substring(pathname.lastIndexOf("/") + 1);
+
   // set up the autosave feature for the SimpleMDE editor
   /*  const autosavedValue = localStorage.getItem(`smde_issue`) || "";
   const anOptions = useMemo(() => {
@@ -53,6 +55,7 @@ const IssueForm = ({ issue }: Props) => {
       if (issue) {
         await axios.patch(`/api/issues/${issue.id}`, data);
         router.push(`/issues/${issue.id}`);
+        router.refresh();
         return;
       }
       await axios.post("/api/issues", data);
@@ -73,7 +76,16 @@ const IssueForm = ({ issue }: Props) => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
+
       <form className="max-w-xl space-y-3" onSubmit={onSubmit}>
+        {lastPath === "edit" && (
+          <IssueStatusChooser
+            status={issue!.status}
+            issueId={issue?.id}
+            title={issue?.title}
+            description={issue?.description}
+          />
+        )}
         <TextField.Root defaultValue={issue?.title} {...register("title")} placeholder="Title" />
         {errors.title && <ErrorMessage>{errors.title?.message} </ErrorMessage>}
         <Controller
@@ -83,7 +95,7 @@ const IssueForm = ({ issue }: Props) => {
           render={({ field }) => <SimpleMDE placeholder="Description" {...field} id="issue" />}
         />
         {errors.description && <ErrorMessage>{errors.description?.message} </ErrorMessage>}
-        <Button disabled={isSubmit}>
+        <Button>
           {issue ? "Update Issue" : "Submit new issue"} {isSubmit && <Spinner />}
         </Button>
       </form>
