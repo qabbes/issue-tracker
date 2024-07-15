@@ -10,16 +10,16 @@ import { Spinner } from "@/app/components";
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [error, setError] = useState(false);
   const router = useRouter();
-  const [isSubmit, setIsSubmit] = useState(false);
+  const [isDeleting, setisDeleting] = useState(false);
 
   const handleDelete = async () => {
     try {
-      setIsSubmit(true);
+      setisDeleting(true);
       await axios.delete("/api/issues/" + issueId);
       router.push("/issues");
       router.refresh();
     } catch (error) {
-      setIsSubmit(false);
+      setisDeleting(false);
       setError(true);
       console.error(error);
     }
@@ -27,9 +27,9 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>
-        <Button color="crimson">
+        <Button color="crimson" disabled={isDeleting}>
           <FaRegTrashCan />
-          {isSubmit ? "Deleting Issue..." : "Delete Issue"} {isSubmit && <Spinner />}
+          {isDeleting ? "Deleting Issue..." : "Delete Issue"} {isDeleting && <Spinner />}
         </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content maxWidth="450px">
