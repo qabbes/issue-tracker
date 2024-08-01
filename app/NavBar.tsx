@@ -41,7 +41,7 @@ const NavLink = () => {
           <Link
             className={classnames({
               "nav-link": true,
-              "text-purple-900": link.href === currentPath,
+              "!text-purple-900": link.href === currentPath,
             })}
             href={link.href}>
             {link.label}
