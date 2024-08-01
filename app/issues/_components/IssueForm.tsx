@@ -34,7 +34,10 @@ const IssueForm = ({ issue }: Props) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const lastPath = pathname.substring(pathname.lastIndexOf("/") + 1);
+
+  //Check if pathname contains 'edit/' followed by a number
+  const editPattern = /edit\/\d+/;
+  const containsEdit = editPattern.test(pathname);
 
   // set up the autosave feature for the SimpleMDE editor
   /*  const autosavedValue = localStorage.getItem(`smde_issue`) || "";
@@ -78,7 +81,7 @@ const IssueForm = ({ issue }: Props) => {
       )}
 
       <form className="max-w-xl space-y-3" onSubmit={onSubmit}>
-        {lastPath === "edit" && (
+        {containsEdit && (
           <IssueStatusChooser
             status={issue!.status}
             issueId={issue?.id}
