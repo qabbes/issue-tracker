@@ -1,28 +1,30 @@
 "use client";
 
+import Skeleton from "@/app/components/Skeleton";
 import { User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
+// prettier-ignore
 const AssigneeSelect = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const {data: users, error, isLoading} = useQuery({
+    queryKey: ["users"],
+    queryFn: () => axios.get<User[]>("/xapi/users").then((response) => response.data),
+    staleTime: 1000 * 60, // 60s
+    retry: 3,
+  });
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const { data: response } = await axios.get<User[]>("/api/users");
-      setUsers(response);
-    };
-    fetchUsers();
-  }, []);
+  if(isLoading) return <Skeleton height="31px"/>
+  if (error) return null;
 
   return (
     <Select.Root size="2">
-      <Select.Trigger placeholder="Assign..." />
+      <Select.Trigger placeholder="Assign to..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestions</Select.Label>
-          {users.map((user) => (
+          {users?.map((user) => (
             <Select.Item key={user.id} value={user.id}>
               {user.name}
             </Select.Item>
