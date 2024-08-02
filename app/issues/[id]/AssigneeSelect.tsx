@@ -8,9 +8,13 @@ import axios from "axios";
 
 // prettier-ignore
 const AssigneeSelect = () => {
-  const {data: users, error, isLoading} = useQuery({
+  const {
+    data: users,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["users"],
-    queryFn: () => axios.get<User[]>("/xapi/users").then((response) => response.data),
+    queryFn: () => axios.get<User[]>("/api/users").then((response) => response.data),
     staleTime: 1000 * 60, // 60s
     retry: 3,
   });
