@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import IssueStatusBadge from "./IssueStatusBadge";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Props {
   title?: Issue["title"];
@@ -24,24 +25,28 @@ const IssueStatusChooser = ({ status, issueId, title, description }: Props) => {
       setCurrentStatus(status);
       // make API PATCH call to update status
       await axios.patch(`/api/issues/${issueId}`, { title, description, status });
+      toast.success("Status updated");
       router.refresh();
     } catch (err) {
       // revert setCurrentStatus to previousStatus status if update fails
       setCurrentStatus(previousStatus);
-      console.error(err);
+      toast.error("Error updating Status");
     }
   };
   return (
-    <Select.Root value={status} onValueChange={(status: Status) => changeStatus(status)}>
-      <Select.Trigger placeholder="Status" />
-      <Select.Content>
-        {Object.values(Status).map((status) => (
-          <Select.Item key={status} value={status}>
-            <IssueStatusBadge status={status} />
-          </Select.Item>
-        ))}
-      </Select.Content>
-    </Select.Root>
+    <>
+      <Select.Root value={status} onValueChange={(status: Status) => changeStatus(status)}>
+        <Select.Trigger placeholder="Status" />
+        <Select.Content>
+          {Object.values(Status).map((status) => (
+            <Select.Item key={status} value={status}>
+              <IssueStatusBadge status={status} />
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
+      <Toaster />
+    </>
   );
 };
 
