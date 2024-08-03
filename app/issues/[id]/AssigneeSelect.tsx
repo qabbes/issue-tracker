@@ -8,31 +8,27 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
-  // prettier-ignore
-  const {data: users,error,isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => axios.get<User[]>("/api/users").then((response) => response.data),
-    staleTime: 1000 * 60, // 60s
-    retry: 3,
-  });
+  const { data: users, error, isLoading } = useUsers();
 
   if (isLoading) return <Skeleton height="31px" />;
   if (error) return null;
+
+  const assignIssue = async (userId: string) => {
+    try {
+      await axios.patch(`/api/issues/${issue.id}`, {
+        assignedToUserId: userId === "unassigned" ? null : userId,
+      });
+      toast.success("Assignee updated");
+    } catch (error) {
+      toast.error("Error updating assignee");
+    }
+  };
 
   return (
     <>
       <Select.Root
         size="2"
-        onValueChange={async (userId: string) => {
-          try {
-            await axios.patch(`/api/issues/${issue.id}`, {
-              assignedToUserId: userId === "unassigned" ? null : userId,
-            });
-            toast.success("Assignee updated");
-          } catch (error) {
-            toast.error("Error updating assignee");
-          }
-        }}
+        onValueChange={assignIssue}
         defaultValue={issue.assignedToUserId ? issue.assignedToUserId : ""}>
         <Select.Trigger placeholder="Assign to..." />
         <Select.Content>
@@ -51,5 +47,13 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   );
 };
+
+const useUsers = () =>
+  useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: () => axios.get("/api/users").then((response) => response.data),
+    staleTime: 1000 * 60, // 60s
+    retry: 3,
+  });
 
 export default AssigneeSelect;
