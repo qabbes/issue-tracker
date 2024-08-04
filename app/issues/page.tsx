@@ -1,18 +1,30 @@
-import { IssueStatusBadge, Link } from "@/app/components";
+import { IssueStatusBadge } from "@/app/components";
 import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import IssuesToolbar from "./IssuesToolbar";
-import { Status } from "@prisma/client";
+import { Issue, Status } from "@prisma/client";
+import Link from "next/link";
+import { FaArrowDownShortWide } from "react-icons/fa6";
 
 interface Props {
-  searchParams: { status: Status };
+  searchParams: { status: Status; orderBy: keyof Issue };
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
+  //********************** SETUP SEARCH PARAMS FOR STATUS ************************ */
+
+  const columns: { label: string; value: keyof Issue; className?: string }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", className: "hidden sm:table-cell" },
+    { label: "Created", value: "createdAt", className: "hidden sm:table-cell" },
+  ];
   //check for typo in query params and returned undefined if status is not a valid status
   const statuses = Object.values(Status);
   const status = statuses.includes(searchParams.status) ? searchParams.status : undefined;
 
+  //********************** SETUP SEARCH PARAMS FOR ORDERBY ************************ */
+
+  //******************************************************************************* */
   const issues = await prisma.issue.findMany({
     where: { status: status },
     orderBy: { createdAt: "desc" },
@@ -24,9 +36,17 @@ const IssuesPage = async ({ searchParams }: Props) => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden sm:table-cell">Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden sm:table-cell">Created</Table.ColumnHeaderCell>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell key={column.value} className={column.className}>
+                <Link
+                  href={{
+                    query: { ...searchParams, orderBy: column.value },
+                  }}>
+                  {column.label}
+                </Link>
+                {column.value === searchParams.orderBy && <FaArrowDownShortWide className="inline ml-1" />}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
         <Table.Body>
