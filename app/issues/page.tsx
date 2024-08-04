@@ -12,7 +12,6 @@ interface Props {
 
 const IssuesPage = async ({ searchParams }: Props) => {
   //********************** SETUP SEARCH PARAMS FOR STATUS ************************ */
-
   const columns: { label: string; value: keyof Issue; className?: string }[] = [
     { label: "Issue", value: "title" },
     { label: "Status", value: "status", className: "hidden sm:table-cell" },
