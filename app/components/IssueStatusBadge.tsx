@@ -5,7 +5,7 @@ import React from "react";
 const statusColors: Record<Status, { label: string; color: "orange" | "violet" | "green" }> = {
   OPEN: { label: "Open", color: "orange" },
   IN_PROGRESS: { label: "In Progress", color: "violet" },
-  DONE: { label: "Done", color: "green" },
+  CLOSED: { label: "Closed", color: "green" },
 };
 
 interface Props {
