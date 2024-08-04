@@ -4,10 +4,10 @@ import { Table } from "@radix-ui/themes";
 import IssuesToolbar from "./IssuesToolbar";
 import { Issue, Status } from "@prisma/client";
 import Link from "next/link";
-import { FaArrowDownShortWide } from "react-icons/fa6";
+import { FaArrowDownShortWide, FaArrowDownWideShort } from "react-icons/fa6";
 
 interface Props {
-  searchParams: { status: Status; orderBy: keyof Issue };
+  searchParams: { status: Status; orderBy: keyof Issue; sortOrder: "asc" | "desc" };
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
@@ -23,11 +23,15 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const status = statuses.includes(searchParams.status) ? searchParams.status : undefined;
 
   //********************** SETUP SEARCH PARAMS FOR ORDERBY ************************ */
+  const toggleOrder = () => {
+    return !searchParams.sortOrder || searchParams.sortOrder === "desc" ? "asc" : "desc";
+  };
+  const orderBy = searchParams.orderBy ? { [searchParams.orderBy]: searchParams.sortOrder } : undefined;
 
   //******************************************************************************* */
   const issues = await prisma.issue.findMany({
     where: { status: status },
-    orderBy: { createdAt: "desc" },
+    orderBy: orderBy,
   });
 
   return (
@@ -40,11 +44,16 @@ const IssuesPage = async ({ searchParams }: Props) => {
               <Table.ColumnHeaderCell key={column.value} className={column.className}>
                 <Link
                   href={{
-                    query: { ...searchParams, orderBy: column.value },
+                    query: { ...searchParams, orderBy: column.value, sortOrder: toggleOrder() },
                   }}>
                   {column.label}
                 </Link>
-                {column.value === searchParams.orderBy && <FaArrowDownShortWide className="inline ml-1" />}
+                {column.value === searchParams.orderBy &&
+                  (searchParams.sortOrder === "asc" ? (
+                    <FaArrowDownShortWide className="inline ml-1" />
+                  ) : (
+                    <FaArrowDownWideShort className="inline ml-1 " />
+                  ))}
               </Table.ColumnHeaderCell>
             ))}
           </Table.Row>
