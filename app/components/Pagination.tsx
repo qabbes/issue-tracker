@@ -2,14 +2,17 @@
 import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from "@radix-ui/react-icons";
 import { Button, Flex, Text } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { set } from "zod";
+import PaginationSizeSelector from "./PaginationSizeSelector";
 
 interface Props {
   itemsCount: number;
-  pageSize: number;
   currentPage: number;
 }
 
-const Pagination = ({ currentPage, pageSize, itemsCount }: Props) => {
+const Pagination = ({ currentPage, itemsCount }: Props) => {
+  const [pageSize, setPageSize] = useState("10");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -19,10 +22,20 @@ const Pagination = ({ currentPage, pageSize, itemsCount }: Props) => {
     router.push("?" + params.toString());
   };
 
-  const pageCount = Math.ceil(itemsCount / pageSize);
-  if (pageCount <= 1) return null;
+  const handlePageSizeChange = (pageSize: string) => {
+    setPageSize(pageSize);
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", pageSize);
+    router.push("?" + params.toString());
+  };
+
+  const pageCount = Math.ceil(itemsCount / parseInt(pageSize));
+  console.log("PAGE COUNT", pageCount);
+  console.log(Math.ceil(itemsCount / parseInt(pageSize)));
+
+  if (pageCount < 1) return null;
   return (
-    <Flex align="center" gap="3">
+    <Flex align="center" gap="3" mb="2">
       <Text size="2">
         Page {currentPage} of {pageCount}
       </Text>
@@ -53,6 +66,9 @@ const Pagination = ({ currentPage, pageSize, itemsCount }: Props) => {
         onClick={() => changePage(pageCount)}>
         <DoubleArrowRightIcon />
       </Button>
+      <Flex ml="auto">
+        <PaginationSizeSelector onPageSizeChange={handlePageSizeChange} />
+      </Flex>
     </Flex>
   );
 };

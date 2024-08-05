@@ -1,13 +1,14 @@
 import { IssueStatusBadge } from "@/app/components";
 import prisma from "@/prisma/client";
-import { Table } from "@radix-ui/themes";
+import { Flex, Table } from "@radix-ui/themes";
 import IssuesToolbar from "./IssuesToolbar";
 import { Issue, Status } from "@prisma/client";
 import Link from "next/link";
 import { FaArrowDownShortWide, FaArrowDownWideShort } from "react-icons/fa6";
+import Pagination from "../components/Pagination";
 
 interface Props {
-  searchParams: { status: Status; orderBy: keyof Issue; sortOrder: "asc" | "desc" };
+  searchParams: { status: Status; orderBy: keyof Issue; sortOrder: "asc" | "desc"; page: string; pageSize: string };
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
@@ -27,15 +28,25 @@ const IssuesPage = async ({ searchParams }: Props) => {
   };
   const orderBy = searchParams.orderBy ? { [searchParams.orderBy]: searchParams.sortOrder } : undefined;
 
-  //******************************************************************************* */
+  //************************ SETUP SEARCH PARAMS FOR PAGINATION ************************* */
+  const page = parseInt(searchParams.page) || 1;
+  const pageSize = searchParams.pageSize ? parseInt(searchParams.pageSize) : 10;
+
+  //************************************************************************************* */
+
   const issues = await prisma.issue.findMany({
     where: { status: status },
     orderBy: orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   });
 
+  const issueCount = await prisma.issue.count({ where: { status } });
+
   return (
-    <div>
+    <>
       <IssuesToolbar />
+      <Pagination currentPage={page} itemsCount={issueCount} />
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
@@ -62,9 +73,9 @@ const IssuesPage = async ({ searchParams }: Props) => {
             <Table.Row key={issue.id}>
               <Table.RowHeaderCell>
                 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-                <div className="block sm:hidden">
+                <Flex className="block sm:hidden">
                   <IssueStatusBadge status={issue.status} />
-                </div>
+                </Flex>
               </Table.RowHeaderCell>
               <Table.Cell className="hidden sm:table-cell">
                 <IssueStatusBadge status={issue.status} />
@@ -74,7 +85,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
           ))}
         </Table.Body>
       </Table.Root>
-    </div>
+    </>
   );
 };
 
