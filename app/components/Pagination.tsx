@@ -3,7 +3,6 @@ import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRigh
 import { Button, Flex, Text } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { set } from "zod";
 import PaginationSizeSelector from "./PaginationSizeSelector";
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 }
 
 const Pagination = ({ currentPage, itemsCount }: Props) => {
-  const [pageSize, setPageSize] = useState("10");
+  const [pageSize, setPageSize] = useState("5");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -30,12 +29,10 @@ const Pagination = ({ currentPage, itemsCount }: Props) => {
   };
 
   const pageCount = Math.ceil(itemsCount / parseInt(pageSize));
-  console.log("PAGE COUNT", pageCount);
-  console.log(Math.ceil(itemsCount / parseInt(pageSize)));
 
   if (pageCount < 1) return null;
   return (
-    <Flex align="center" gap="3" mb="2">
+    <Flex align="center" gap="3">
       <Text size="2">
         Page {currentPage} of {pageCount}
       </Text>

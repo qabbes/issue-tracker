@@ -1,6 +1,6 @@
 "use client";
 import { Flex, Select, Text } from "@radix-ui/themes";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const PaginationSizeSelector = ({ onPageSizeChange }: Props) => {
-  const [pageSize, setPageSize] = useState("");
+  const [pageSize, setPageSize] = useState("5");
   const searchParams = useSearchParams();
   const pageSizeParam = searchParams.get("pageSize");
 
@@ -26,9 +26,9 @@ const PaginationSizeSelector = ({ onPageSizeChange }: Props) => {
 
   return (
     <Flex align="center" gap="3">
-      <Text size="2">Items per page:</Text>
+      <Text size="2">Issues per page:</Text>
       <Select.Root size="1" value={pageSizeParam ? pageSizeParam : pageSize} onValueChange={handlePageSizeChange}>
-        <Select.Trigger placeholder="Items per page:"></Select.Trigger>
+        <Select.Trigger placeholder="Issues per page:"></Select.Trigger>
         <Select.Content>
           {pageSizes.map((pageSize) => (
             <Select.Item key={pageSize.label} value={pageSize.value}>

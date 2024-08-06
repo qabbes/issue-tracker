@@ -27,6 +27,9 @@ const IssueStatusFilter = () => {
     if (searchParams.get("sortOrder")) {
       params.append("sortOrder", searchParams.get("sortOrder")!);
     }
+    if (searchParams.get("pageSize")) {
+      params.append("pageSize", searchParams.get("pageSize")!);
+    }
     const query = status === "ALL" && params.size === 0 ? "" : "?" + params.toString();
     router.push(`/issues/${query}`);
   };

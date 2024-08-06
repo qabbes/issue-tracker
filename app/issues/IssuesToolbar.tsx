@@ -5,7 +5,7 @@ import IssueStatusFilter from "./IssueStatusFilter";
 
 const IssuesToolbar = () => {
   return (
-    <Flex mb="5" justify="between">
+    <Flex justify="between">
       <Box>
         <IssueStatusFilter />
       </Box>
