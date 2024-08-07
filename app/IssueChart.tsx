@@ -22,7 +22,10 @@ const IssueChart = ({ open, inProgress, closed }: Props) => {
   ];
 
   const handleClick = (data: any) => {
-    const status = data.activeLabel.split(" ")[0].toUpperCase();
+    const status =
+      data.activeLabel.split(" ")[0].toUpperCase() === "IN-PROGRESS"
+        ? "IN_PROGRESS"
+        : data.activeLabel.split(" ")[0].toUpperCase();
     router.push(`/issues?&status=${status}`);
   };
 
