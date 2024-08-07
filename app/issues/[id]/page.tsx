@@ -41,7 +41,6 @@ const IssueDetailPage = async ({ params }: Props) => {
 };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  // read route params and fetch issue
   const issue = await fetchUser(parseInt(params.id));
 
   return {
