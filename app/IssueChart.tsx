@@ -1,11 +1,8 @@
 "use client";
-import { Box, Card, Flex } from "@radix-ui/themes";
-import React, { PureComponent } from "react";
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import CustomTooltip from "./CustomTooltip";
-import Link from "next/link";
+import { Card } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
-import { log } from "console";
+import { Bar, BarChart, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import CustomTooltip from "./CustomTooltip";
 
 interface Props {
   open: number;
