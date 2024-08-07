@@ -4,6 +4,8 @@ import LatestIssues from "./LatestIssues";
 import IssueChart from "./IssueChart";
 import { Flex, Grid } from "@radix-ui/themes";
 
+import { Metadata } from "next";
+
 export default async function Home() {
   const open = await prisma.issue.count({ where: { status: "OPEN" } });
   const inProgress = await prisma.issue.count({ where: { status: "IN_PROGRESS" } });
@@ -19,3 +21,15 @@ export default async function Home() {
     </Grid>
   );
 }
+
+export const metadata: Metadata = {
+  title: "Issue Tracker - Dashboard",
+  description: "Dashboard for the issue tracker application",
+  openGraph: {
+    title: "Issue Tracker - Dashboard",
+    description: "Dashboard for the issue tracker application",
+    type: "article",
+    publishedTime: "2024-08-07T00:00:00.000Z",
+    authors: ["qabbes"],
+  },
+};
