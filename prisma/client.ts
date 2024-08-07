@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
+//pretter-ignore
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient(
+    //{ log: ["query"] } to log everydatabase queries
+  );
 };
 
 declare const globalThis: {
